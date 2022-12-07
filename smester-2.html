@@ -23,7 +23,7 @@
   <head>
     <div class="container-fluid bg-secondary">
       <div class="container">
-        <h1 class="text-center p-5 title-db"><i class="fa-solid fa-face-grin-tongue-wink p-2"></i></i>DATA DOSEN<i
+        <h1 class="text-center p-5 title-db"><i class="fa-solid fa-face-grin-tongue-wink p-2"></i></i>DATA SEMESTER 2<i
             class="fa-solid fa-face-grin-tongue-wink p-2"></i></h1>
       </div>
   </head>
@@ -64,6 +64,7 @@
           <thead>
             <tr class="table-dark rounded">
               <th scope="col" class="text-center">ID</th>
+              <th scope="col">NIM</th>
               <th scope="col">NAMA</th>
               <th scope="col" class="text-center" style="width: 170px;">ACTION</th>
             </tr>
@@ -87,6 +88,10 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
+            <div class="my-2">
+              <label class="p-2">NIM</label>
+              <input type="text" id="inputNim" class="form-control" />
+            </div>
             <div class="my-2">
               <label class="p-2">nama</label>
               <input type="text" id="inputNama" class="form-control" />
@@ -120,6 +125,10 @@
           <div class="modal-body">
             <input type="hidden" id="id">
             <div class="my-2">
+              <label class="p-2">NIM</label>
+              <input type="text" id="inputNimUpdate" class="form-control" />
+            </div>
+            <div class="my-2">
               <label class="p-2">Nama</label>
               <input type="text" id="inputNamaUpdate" class="form-control" />
             </div>
@@ -144,7 +153,7 @@
     crossorigin="anonymous"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  <script src="js/db.js"></script>
+  <script src="js/smt2.js"></script>
 
 </body>
 
