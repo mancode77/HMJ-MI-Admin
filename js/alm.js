@@ -41,11 +41,11 @@
         if (e.target.classList.contains('hapusData')) {
             if (confirm("Apakah Anda Ingin Menghapusnya?")) {
               db.collection("alumni").doc(id).delete().then(() => {
-                console.log("Document successfully deleted!");
                 alert('Data Berhasil Dihapus')
-              }).catch((error) => {
-                console.error("Error removing document: ", error);
-              });
+                setTimeout(() => {
+                  window.location.reload();
+                }, 500);
+              })
             } else {
               alert('Proses Dibatalkan')
             }
@@ -57,17 +57,15 @@
     document.getElementById('updateData').addEventListener('click', function (){
       db.collection('alumni').doc(document.getElementById('id').value).update({
         nim : document.getElementById('inputNimUpdate').value,
-        nama : document.getElementById('inputNamaUpdate').value
-      })
-      .then(() => {
-        console.log("Document successfully updated!");
-        setTimeout(() => {
-          document.getElementById('inputUpdateSuccses').innerHTML = `<p class="m-auto"><i class="fa-solid fa-user-check px-2 text-succes"></i>Data Berhasil Diupdate</p>`
-        }, 1000);
-      })
-      .catch((error) => {
-          console.error("Error updating document: ", error);
+        nama : document.getElementById('inputNamaUpdate').value,
+        kelamin : document.querySelector('input[name=jenisKelamin]:checked').value
       });
+      setTimeout(() => {
+        document.getElementById('inputUpdateSuccses').innerHTML = `<p class="m-auto"><i class="fa-solid fa-user-check px-2 text-success"></i>Data Berhasil Diupdate</p>`
+      }, 300);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     });
     // Update Data End
 
@@ -81,6 +79,11 @@
               document.getElementById('id').value = doc.id;
               document.getElementById('inputNimUpdate').value = doc.data().nim;
               document.getElementById('inputNamaUpdate').value = doc.data().nama;
+              if(doc.data().kelamin === "Perempuan") {
+                document.getElementById("inputSexFemale").checked = true;
+              } else {
+                document.getElementById("inputSexMale").checked = true;
+              }
             }else{
               console.log("Document data:", doc.data());
             }
@@ -96,15 +99,14 @@
     document.getElementById("saveData").addEventListener("click", function () {
       db.collection("alumni").add({
         nim: document.getElementById('inputNim').value,
-        nama: document.getElementById('inputNama').value
-      }).then(() => {
-        // console.log("Document written with ID: ", docRef.id);
-        setTimeout(() => {
-          document.getElementById('inputSuccses').innerHTML = `<p class="m-auto"><i class="fa-solid fa-user-check px-2 text-success"></i>Data Berhasil Ditambahkan</p>`
-        }, 1000);
+        nama: document.getElementById('inputNama').value,
+        kelamin : document.querySelector('input[name=jenisKelamin]:checked').value
       })
-      .catch((error) => {
-        console.error("Error adding document: ", error);
-      });
+      setTimeout(() => {
+            document.getElementById('inputSuccses').innerHTML = `<p class="m-auto"><i class="fa-solid fa-user-check px-2 text-succes"></i>Data Berhasil Ditambahkan</p>`
+          }, 300);
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
     });
     // START

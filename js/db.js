@@ -40,11 +40,11 @@
         if (e.target.classList.contains('hapusData')) {
             if (confirm("Apakah Anda Ingin Menghapusnya?")) {
               db.collection("dosen").doc(id).delete().then(() => {
-                console.log("Document successfully deleted!");
                 alert('Data Berhasil Dihapus')
-              }).catch((error) => {
-                console.error("Error removing document: ", error);
-              });
+                setTimeout(() => {
+                  window.location.reload();
+                }, 500);
+              })
             } else {
               alert('Proses Dibatalkan')
             }
@@ -56,19 +56,19 @@
       // Input Update
     document.getElementById('updateData').addEventListener('click', function (){
       db.collection('dosen').doc(document.getElementById('id').value).update({
-        nama : document.getElementById('inputNamaUpdate').value
+        nama : document.getElementById('inputNamaUpdate').value,
+        kelamin : document.querySelector('input[name=jenisKelamin]:checked').value
       })
-      .then(() => {
-        console.log("Document successfully updated!");
-        setTimeout(() => {
-          document.getElementById('inputUpdateSuccses').innerHTML = `<p class="m-auto"><i class="fa-solid fa-user-check px-2 text-succes"></i>Data Berhasil Diupdate</p>`
-        }, 1000);
-      })
-      .catch((error) => {
-          console.error("Error updating document: ", error);
-      });
+      setTimeout(() => {
+        document.getElementById('inputUpdateSuccses').innerHTML = `<p class="m-auto"><i class="fa-solid fa-user-check px-2 text-success"></i>Data Berhasil Diupdate</p>`
+      }, 300);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     });
 
+
+    // Menampilkan Value Awal Sebelum Dirubah
     document.getElementById('data').addEventListener('click', function(e) {
       const id = e.target.dataset.id;
       if (e.target.classList.contains('editData')) {
@@ -77,6 +77,11 @@
               // console.log("Document data:", doc.data().nim);
               document.getElementById('id').value = doc.id;
               document.getElementById('inputNamaUpdate').value = doc.data().nama;
+              if(doc.data().kelamin == "Perempuan") {
+                document.getElementById("inputSexFemale").checked = true;
+              } else {
+                document.getElementById("inputSexMale").checked = true;
+              }
             }else{
               console.log("Document data:", doc.data());
             }
@@ -90,14 +95,21 @@
     // Menambah Data
     document.getElementById("saveData").addEventListener("click", function () {
       db.collection("dosen").add({
-        nama: document.getElementById('inputNama').value
-      }).then(() => {
-        // console.log("Document written with ID: ", docRef.id);
-        setTimeout(() => {
-          document.getElementById('inputSuccses').innerHTML = `<p class="m-auto"><i class="fa-solid fa-user-check px-2 text-succes"></i>Data Berhasil Ditambahkan</p>`
-        }, 1000);
-      })
-      .catch((error) => {
-        console.error("Error adding document: ", error);
+        nama: document.getElementById('inputNama').value,
+        kelamin : document.querySelector('input[name=jenisKelamin]:checked').value
+        })
+          setTimeout(() => {
+            document.getElementById('inputSuccses').innerHTML = `<p class="m-auto"><i class="fa-solid fa-user-check px-2 text-succes"></i>Data Berhasil Ditambahkan</p>`
+          }, 300);
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
       });
-    });
+      
+      
+      
+
+      
+      
+
+    
