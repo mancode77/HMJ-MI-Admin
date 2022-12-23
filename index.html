@@ -42,11 +42,11 @@
           <li>
             <hr class="dropdown-divider">
           </li>
-          <li><a class="dropdown-item" href="smester-2.html">SEMESTER 2</a></li>
+          <li><a class="dropdown-item" href="smester-2.html">SEMESTER 3</a></li>
           <li>
             <hr class="dropdown-divider">
           </li>
-          <li><a class="dropdown-item" href="smester-3.html">SEMESTER 3</a></li>
+          <li><a class="dropdown-item" href="smester-3.html">SEMESTER 5</a></li>
         </ul>
       </div>
       <h3 class="nav-title"><a href="alumni.html">ALUMNI</a></h3>
@@ -98,12 +98,17 @@
                   Laki - Laki
                 </label>
               </div>
-              <div class="form-check">
+              <div class="form-check mb-2">
                 <input class="form-check-input" type="radio" value="Perempuan" name="jenisKelamin"
                   id="inputSexFemaleNew">
                 <label class="form-check-label" for="inputSexFemaleNew">
                   Perempuan
                 </label>
+              </div>
+              <label for="inputFiles">Upload Foto Profil :</label>
+              <div class="input-group">
+                <input type="file" class="form-control" id="inputFiles" aria-describedby="inputFiles"
+                  aria-label="Upload">
               </div>
             </div>
           </div>
@@ -174,6 +179,7 @@
     crossorigin="anonymous"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
   <script src="js/db.js"></script>
 
 </body>

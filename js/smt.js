@@ -13,11 +13,12 @@
     firebase.initializeApp(Config);
 
     const db = firebase.firestore();
+    const storage = firebase.storage();
 
 
     // Menampilkan Data Ke Table
     async function getData() {
-      const semester = await db.collection('semester1').get();
+      const semester = await db.collection('smt1').get();
       semester.docs.forEach((smt, i) => {
         document.getElementById('data').innerHTML += `
         <tr>
@@ -40,11 +41,18 @@
         const id = e.target.dataset.id
         if (e.target.classList.contains('hapusData')) {
             if (confirm("Apakah Anda Ingin Menghapusnya?")) {
-              db.collection("semester1").doc(id).delete().then(() => {
-                alert('Data Berhasil Dihapus')
-                setTimeout(() => {
-                  window.location.reload();
-                }, 500);
+              const dosen = db.collection('smt1').doc(id);
+              dosen.get().then((doc) => {                   // Function Delete IMG In Storage Start
+                if(doc.exists){
+                  storage.ref().child(`smt1/${doc.data().nama}.jpg`).delete();
+                  console.log('berhasil');
+                }                                           // Function Delete IMG In Storage End
+                  dosen.delete().then(() => {         // Menghapus data Document Dari DB  Start
+                    alert('Data Berhasil Dihapus');   // Tidak Termauk Dalam Baris Code 45
+                    setTimeout(() => {
+                      window.location.reload();
+                    }, 1000);
+                  })                                  // Menghapus data Document Dari DB End
               })
             } else {
               alert('Proses Dibatalkan')
@@ -55,7 +63,7 @@
 
     // Update Data Start
     document.getElementById('updateData').addEventListener('click', function (){
-      db.collection('semester1').doc(document.getElementById('id').value).update({
+      db.collection('smt1').doc(document.getElementById('id').value).update({
         nim : document.getElementById('inputNimUpdate').value,
         nama : document.getElementById('inputNamaUpdate').value,
         kelamin : document.querySelector('input[name=jenisKelamin]:checked').value
@@ -73,7 +81,7 @@
     document.getElementById('data').addEventListener('click', function(e) {
       const id = e.target.dataset.id;
       if (e.target.classList.contains('editData')) {
-        db.collection("semester1").doc(id).get().then((doc) => {
+        db.collection("smt1").doc(id).get().then((doc) => {
             if(doc.exists){
               // console.log("Document data:", doc.data().nim);
               document.getElementById('id').value = doc.id;
@@ -97,16 +105,32 @@
 
     // Menambah Data START
     document.getElementById("saveData").addEventListener("click", function () {
-      db.collection("semester1").add({
+      // Menambah Data Diri Ke DB
+      db.collection("smt1").add({
         nim: document.getElementById('inputNim').value,
         nama: document.getElementById('inputNama').value,
         kelamin : document.querySelector('input[name=jenisKelamin]:checked').value
       })
-      setTimeout(() => {
-            document.getElementById('inputSuccses').innerHTML = `<p class="m-auto"><i class="fa-solid fa-user-check px-2 text-succes"></i>Data Berhasil Ditambahkan</p>`
-          }, 300);
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000);
+      
+      // Menambah Foto Profil Ke Storage
+      function addImg(){
+        const fileInput = document.getElementById('inputFiles');
+        const file = fileInput.files[0];
+        const fileRef = storage.ref(`smt1/${document.getElementById('inputNama').value}.jpg`);
+        fileRef.put(file).on('state_changed', (snapshot) => {
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          const hasil = Math.ceil(progress)
+          document.getElementById('inputSuccses').innerHTML = `<p class="m-auto">${hasil} %</p>`
+          if(progress === 100){
+            setTimeout(() => {
+              document.getElementById('inputSuccses').innerHTML = `<p class="m-auto"><i class="fa-solid fa-user-check px-2 text-succes"></i>Data Berhasil Ditambahkan</p>`
+              }, 300);
+            setTimeout(() => {
+              window.location.reload();
+              }, 2000);
+            }
+        })
+      }
+      addImg();
     });
     // START

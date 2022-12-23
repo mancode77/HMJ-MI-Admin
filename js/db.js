@@ -13,6 +13,7 @@
     firebase.initializeApp(Config);
 
     const db = firebase.firestore();
+    const storage = firebase.storage()
 
 
     // Menampilkan Data Ke Table
@@ -34,23 +35,36 @@
     };
     getData()
 
-    // Menghapus Data
+    // Code Menghapus Data Start
+    // Menghapus Data Document In DB
     document.getElementById('data').addEventListener('click', function(e){
-        const id = e.target.dataset.id
-        if (e.target.classList.contains('hapusData')) {
-            if (confirm("Apakah Anda Ingin Menghapusnya?")) {
-              db.collection("dosen").doc(id).delete().then(() => {
-                alert('Data Berhasil Dihapus')
-                setTimeout(() => {
-                  window.location.reload();
-                }, 500);
-              })
-            } else {
-              alert('Proses Dibatalkan')
-            }
-          };
+      const id = e.target.dataset.id
+      console.log(id);
+      if (e.target.classList.contains('hapusData')) {
+          if (confirm("Apakah Anda Ingin Menghapusnya?")) {
+            // Function Delete IMG In Storage
+            const dosen = db.collection('dosen').doc(id);
+            dosen.get().then((doc) => {
+              if(doc.exists){
+                storage.ref().child(`dosen/${doc.data().nama}.jpg`).delete();
+                console.log('berhasil');
+              }
+
+              // Menghapus data Document Dari DB
+                dosen.delete().then(() => {         // Tidak Termauk Dalam Baris Code 47
+                  alert('Data Berhasil Dihapus');
+                  setTimeout(() => {
+                    window.location.reload();
+                  }, 1000);
+                })
+            })
+          } else {
+          alert('Proses Dibatalkan')
+          }
+        }
       }
     );
+    // Code Menghapus Data End
 
     // Update Data Start
       // Input Update
@@ -73,37 +87,52 @@
       const id = e.target.dataset.id;
       if (e.target.classList.contains('editData')) {
         db.collection("dosen").doc(id).get().then((doc) => {
-            if(doc.exists){
-              // console.log("Document data:", doc.data().nim);
-              document.getElementById('id').value = doc.id;
-              document.getElementById('inputNamaUpdate').value = doc.data().nama;
-              if(doc.data().kelamin == "Perempuan") {
-                document.getElementById("inputSexFemale").checked = true;
-              } else {
-                document.getElementById("inputSexMale").checked = true;
-              }
-            }else{
-              console.log("Document data:", doc.data());
+          if(doc.exists){
+            // console.log("Document data:", doc.data().nim);
+            document.getElementById('id').value = doc.id;
+            document.getElementById('inputNamaUpdate').value = doc.data().nama;
+            if(doc.data().kelamin == "Perempuan") {
+              document.getElementById("inputSexFemale").checked = true;
+            } else {
+              document.getElementById("inputSexMale").checked = true;
             }
-          }).catch((error) => {
-            console.log("Error getting document:", error);
-          });
+          }else{
+            console.log("Document data:", doc.data());
+          }
+        })
       }  
     })
     
 
-    // Menambah Data
+    // Menambah Data Mahaiswa
     document.getElementById("saveData").addEventListener("click", function () {
+      // Menambah Data Diri Ke DB
       db.collection("dosen").add({
         nama: document.getElementById('inputNama').value,
         kelamin : document.querySelector('input[name=jenisKelamin]:checked').value
-        })
-          setTimeout(() => {
-            document.getElementById('inputSuccses').innerHTML = `<p class="m-auto"><i class="fa-solid fa-user-check px-2 text-succes"></i>Data Berhasil Ditambahkan</p>`
-          }, 300);
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000);
+        });
+
+        // Menambah Foto Profil Ke Storage
+        function addImg(){
+          const fileInput = document.getElementById('inputFiles');
+          const file = fileInput.files[0];
+          const fileRef = storage.ref(`dosen/${document.getElementById('inputNama').value}.jpg`);
+          
+          fileRef.put(file).on('state_changed', (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            const hasil = Math.ceil(progress)
+            document.getElementById('inputSuccses').innerHTML = `<p class="m-auto">${hasil} %</p>`
+            if(progress === 100){
+              setTimeout(() => {
+                document.getElementById('inputSuccses').innerHTML = `<p class="m-auto"><i class="fa-solid fa-user-check px-2 text-succes"></i>Data Berhasil Ditambahkan</p>`
+                }, 300);
+              setTimeout(() => {
+                window.location.reload();
+                }, 2000);
+              }
+          })
+        }
+        addImg();
       });
       
       
